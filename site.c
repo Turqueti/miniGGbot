@@ -57,7 +57,7 @@ void sitePrinta(SITE* site){
 
 void siteAtualizaCod(SITE* site, int cod){
     site->codigo = cod;
-    //printf("codigo atualizado com sucesso\n");
+    /*printf("codigo atualizado com sucesso\n");*/
 }
 
 void sitePrintaCod(SITE* site){
@@ -73,7 +73,7 @@ int siteRetornaCod(SITE* site){
 
 void siteAtualizaNome(SITE* site, char nome[50]){
     strcpy(site->nome,nome);
-    //printf("nome atualizado com sucesso\n");
+    /*printf("nome atualizado com sucesso\n");*/
 }
 
 void sitePrintaNome(SITE* site){
@@ -82,7 +82,7 @@ void sitePrintaNome(SITE* site){
 
 void siteAtualizaRelevancia(SITE* site, int relevancia){
     site->relevancia = relevancia;
-    //printf("relevancia atualizada com sucesso\n");
+    /*printf("relevancia atualizada com sucesso\n");*/
 }
 
 void sitePrintaRelevancia(SITE* site){
@@ -92,7 +92,7 @@ void sitePrintaRelevancia(SITE* site){
 
 void siteAtualizaLink(SITE* site, char link[100]){
     strcpy(site->link,link);
-    //printf("link atualizado com sucesso\n");
+    /*printf("link atualizado com sucesso\n");*/
 }
 
 void sitePrintaLink(SITE* site){
@@ -106,7 +106,7 @@ void siteAtualizaPalavrasChave(SITE* site, char palavra[50]){
         if(site->palavrasChave[i][0] == '\0' )
         {
             strcpy(site->palavrasChave[i],palavra);
-            //printf("palavra adicionada com sucesso\n");
+            /*printf("palavra adicionada com sucesso\n");*/
             break;
 
         }else if (site->palavrasChave[i][0] != '\0' && i == 9) {

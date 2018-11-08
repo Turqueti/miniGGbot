@@ -3,7 +3,10 @@
 #include <string.h>
 #include "site.h"
 
+/*funcoes do cliente*/
 void recebePalavrasChave(SITE *site);
+void recebeSite(SITE* site);
+/*funcoes do cliente*/
 
 void recebeSite(SITE* site) {
     int codigo;
