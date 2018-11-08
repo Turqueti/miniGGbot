@@ -1,3 +1,0 @@
-# miniGGbot
-
-fon

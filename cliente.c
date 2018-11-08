@@ -1,0 +1,312 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "trab.h"
+
+#define  nomearquivo  "1.in"
+
+int UsrInptNome(SITE* temp);
+int UsrInptRelev(SITE* temp);
+int UsrInptLink(SITE* temp);
+
+void recebePalavrasChave(SITE *site,FILE* arquivo) {
+    char* bufferPalavra;
+    bufferPalavra = (char*)malloc(sizeof(char)*50);
+
+    int i,j;
+    j = 0;
+    i = 0;
+    char bufferLetra;
+    bufferLetra = '1';
+
+    while (bufferLetra != ',' ||bufferLetra != '\n') {
+        bufferLetra = (char)fgetc(arquivo);
+        bufferPalavra[i] = bufferLetra;
+        i++;
+        if(bufferLetra == ','){
+
+            bufferPalavra[i-1] = '\0';
+            siteAtualizaPalavrasChave(site,bufferPalavra);
+            j++;
+            i = 0;
+
+
+        }else if (bufferLetra == '\n') {
+
+            bufferPalavra[i-1] = '\0';
+            siteAtualizaPalavrasChave(site,bufferPalavra);
+            j++;
+            i = 0;
+            break;
+        }
+    }
+
+    free(bufferPalavra);
+}
+
+void recebeSite(SITE *site,FILE* arquivo) {
+    int cod;
+    char* nome;
+    int relevancia;
+    char* link;
+
+    nome = (char*)malloc(sizeof(char)*50);
+    link = (char*)malloc(sizeof(char)*100);
+
+    fscanf(arquivo,"%d,%[^,],%d,%[^,]%*c",&cod,nome,&relevancia,link);
+    siteAtualizaCod(site,cod);
+    siteAtualizaNome(site,nome);
+    siteAtualizaRelevancia(site,relevancia);
+    siteAtualizaLink(site,link);
+
+    recebePalavrasChave(site,arquivo);
+
+    free(nome);
+    free(link);
+}
+
+int numLinhas(){
+
+    FILE *arquivo;
+    int contador;
+    char aux;
+
+    arquivo = fopen(nomearquivo, "r");
+
+
+    contador = 0;
+    aux = getc(arquivo);/*le o primeiro char*/
+
+    while (aux != EOF) {
+        if (aux == '\n')
+            contador++;
+        aux = getc(arquivo);
+    }
+
+    fclose(arquivo);
+    return contador;
+}
+
+void FreeLista(SITE** lista,int numlin) {
+    for (int i = 0; i < numlin; i++) {
+        siteFree(lista[i]);
+    }
+    free(lista);
+
+}
+
+void PrintaLista(SITE** lista,int numlin) {
+    for (int i = 0; i < numlin; i++) {
+        sitePrinta(lista[i]);
+        printf("..................................................\n");
+    }
+}
+
+void recebeLista(LISTA* lista) {
+
+    FILE* arquivo;
+    arquivo = fopen(nomearquivo, "r");
+    SITE* siteTemp;
+
+    int numlin;
+    numlin = numLinhas();
+
+    for (int i = 0; i < numlin; i++) {
+        siteTemp = siteInicializa();
+        recebeSite(siteTemp,arquivo);
+        ListaInsereSite(lista,siteTemp);
+    }
+
+
+    fclose(arquivo);
+}
+
+void ClienteInsereSite(LISTA* l){
+    SITE* find;
+    do {
+        int cod;
+        printf("\nInsira um codigo pro site :\n>");
+        scanf("%d",&cod);
+        find = ListaBuscaCodigo(l,cod);
+        if(find == NULL){
+
+            SITE* temp;
+            temp = siteInicializa();
+
+            siteAtualizaCod(temp,cod);
+
+            UsrInptNome(temp);
+
+            int test;
+            test = UsrInptRelev(temp);
+            while (test == 1) {
+                test = UsrInptRelev(temp);
+            }
+
+            UsrInptLink(temp);
+
+
+            printf("\nInsira um n de palavras-chave do site:(n=<10)\n");
+            int n;
+            scanf("%d",&n);
+
+
+            char* palavratemp;
+            int i;
+            for(i=0;i<n;i++){
+                palavratemp = (char*)malloc(sizeof(char)*50);
+                printf("\nInsira uma palavra chave(max 50 char)\n");
+                scanf("%s",palavratemp);
+                siteAtualizaPalavrasChave(temp,palavratemp);
+                free(palavratemp);
+            }
+
+            ListaInsereSite(l,temp);
+        }else{
+        printf("\nCodigo ja existente!!!\nTente outro\n\n");
+        }
+
+    } while(find != NULL);
+
+}
+
+void ClienteRemoveSite(LISTA* lista) {
+    int cod;
+    printf("\nDigite o codigo do item a ser deletado: \n");
+    scanf("%d",&cod);
+    int check = ListaRemoveSite(lista,cod);
+    if(check == 1){
+        printf("\nSite removido com sucesso\n");
+    }else{
+        printf("\nNao ha site com este codigo para ser removido\n");
+    }
+}
+
+void ClienteAtualizaRelevancia(LISTA* l){
+	int cod, relev;
+
+	printf("\nInforme o codigo do site: ");
+	scanf("%d", &cod);
+
+	SITE* find = ListaBuscaCodigo(l, cod);
+	if (find == NULL){
+		printf("\nNao foi possivel encontrar o site!!!\nVerifique se o codigo foi inserido corretamente\n");
+		return;
+	}
+
+	printf("\nInforme a nova relevancia do site com nome ");
+	sitePrintaNome(find);
+	printf("> ");
+	scanf("%d",&relev);
+
+	if(relev >= 0 && relev <= 1000){
+		siteAtualizaRelevancia(find,relev);
+		printf("\nRelevancia do site atualizada com SUCESSO\n");
+	}else{
+		printf("\nValor de relevancia invalido!!!\nValor deve estar entre [0 - 1000]\n");
+	}
+}
+
+void ClienteInserePalavraChave(LISTA *l){
+    int cod;
+
+    printf("\nInforme o codigo do site: ");
+    scanf("%d", &cod);
+
+    SITE* find = ListaBuscaCodigo(l, cod);
+    if (find == NULL){
+		printf("\nNao foi possivel encontrar o site!!!\nVerifique se o codigo foi inserido corretamente\n");
+		return;
+	}
+    printf("\nInsira um n de palavras-chave do site:(n=<10)\n");
+    int n;
+    scanf("%d",&n);
+
+    char* palavratemp;
+    int i;
+    for(i=0;i<n;i++){
+        palavratemp = (char*)malloc(sizeof(char)*50);
+        printf("\nInsira uma palavra chave(max 50 char)\n");
+        scanf("%s",palavratemp);
+        siteAtualizaPalavrasChave(find,palavratemp);
+        printf("\nPalavra(s) inserida(s) com sucesso!!\n");
+        free(palavratemp);
+    }
+
+}
+
+int UsrInptNome(SITE* temp){
+
+    printf("Insira o nome do site:(MAX 50chars)\n>");
+    char* nome;
+    nome = (char*)malloc(sizeof(char)*50);
+    scanf("%s",nome);
+    siteAtualizaNome(temp,nome);
+    free(nome);
+    return 0;
+}
+
+int UsrInptRelev(SITE* temp){
+    int relev;
+    printf("Insira a relevancia do site:\n>");
+    scanf("%d",&relev);
+    if(relev <= 0 || relev >= 1000){
+        printf("\nValor de relevancia invalido!!!\nValor deve ser entre [0 - 1000]\n\n");
+        return 1;
+    }else{
+        siteAtualizaRelevancia(temp,relev);
+        return 0;
+    }
+}
+
+int UsrInptLink(SITE* temp){
+    printf("Insira o link do site:\n>");
+    char* link;
+    link = (char*)malloc(sizeof(char)*50);
+    scanf("%s",link);
+    siteAtualizaLink(temp,link);
+    free(link);
+}
+
+void menu(LISTA* lista){
+	int opt;
+	do{
+		printf("\n-[Escolha uma operacao]-\n");
+		printf("\n1.Inserir um site\n2.Remover um site\n3.Inserir palavra-chave\n4.Atualizar relevancia\n5.Sair\n6.Imprimir Lista\n");
+		scanf("%d",&opt);
+		switch(opt){
+			case 1: ClienteInsereSite(lista);
+			break;
+
+			case 2: ClienteRemoveSite(lista);
+			break;
+
+			case 3: ClienteInserePalavraChave(lista);
+			break;
+
+			case 4: ClienteAtualizaRelevancia(lista);
+			break;
+            case 6: ListaPrinta(lista);
+            break;
+			default: opt = 5;
+		}
+	}while(opt != 5);
+	return;
+}
+
+int main(int argc, char const *argv[]) {
+
+    /*RECEBE ENTRADA*/
+    LISTA* lista;
+    lista = ListaCriar();
+    recebeLista(lista);
+    /* RECEBE ENTRADA*/
+
+    menu(lista);
+
+    /*FREE ENTRADA*/
+    ListaApagar(lista);
+    /*FREE ENTRADA*/
+
+    return 0;
+}
