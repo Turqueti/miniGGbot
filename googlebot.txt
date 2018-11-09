@@ -1,0 +1,1 @@
+0000,DuckDuckGo,1000,https://duckduckgo.com/,duckduckgo,navegador,anonimo,pesquisas
