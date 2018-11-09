@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "site.h"
+#include "lista.h"
 
 #define  nomearquivo  "googlebot.txt"
 
@@ -86,32 +86,31 @@ void recebePalavrasChave(SITE *site,FILE* arquivo) {
     }
 }
 
-/*void recebeLista(LISTA* lista) {
+void recebeLista(LISTA* lista) {
+
+    int numlin;
+    numlin = numLinhas();
 
     FILE* arquivo;
     arquivo = fopen(nomearquivo, "r");
     SITE* siteTemp;
 
-    int numlin;
-    numlin = numLinhas();
 
-    for (int i = 0; i < numlin; i++) {
+    int i;
+    for (i = 0; i < numlin; i++) {
         siteTemp = recebeSite(arquivo);
         ListaInsereSite(lista,siteTemp);
     }
 
 
     fclose(arquivo);
-}*/
+}
 
 int main(int argc, char const *argv[]) {
-    SITE* site;
-    FILE* arquivo;
-    arquivo = fopen(nomearquivo, "r");
-    site = recebeSite(arquivo);
-
-    sitePrinta(site);
-    siteFree(site);
-    fclose(arquivo);
+    LISTA* l;
+    l = ListaCriar();
+    recebeLista(l);
+    ListaPrinta(l);
+    ListaApagar(l);
     return 0;
 }
