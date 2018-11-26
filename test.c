@@ -10,6 +10,9 @@
 void recebePalavrasChave(SITE *site,FILE* arquivo);
 SITE* recebeSite(FILE* arquivo);
 int numLinhas();
+
+void ClienteInsereSite(LISTA* l);
+int UsrInptLink(SITE* temp);
 /*funcoes do cliente*/
 
 int numLinhas(){
@@ -113,8 +116,7 @@ void menu(LISTA* lista){
 		scanf("%d",&opt);
 		switch(opt){
 			case 1:
-                /*ClienteInsereSite(lista);*/
-                printf("1\n");
+                ClienteInsereSite(lista);
 			break;
 
 			case 2:
@@ -145,6 +147,89 @@ void menu(LISTA* lista){
 }
 
 
+/*cliente insere site*/
+int UsrInptNome(SITE* temp){
+
+    printf("Insira o nome do site:(MAX 50chars)\n>");
+    char nome[50];
+    scanf("%s",nome);
+    siteAtualizaNome(temp,nome);
+    return 0;
+}
+
+int UsrInptRelev(SITE* temp){
+    int relev;
+    printf("Insira a relevancia do site:\n>");
+    scanf("%d",&relev);
+    if(relev <= 0 || relev >= 1000){
+        printf("\nValor de relevancia invalido!!!\nValor deve ser entre [0 - 1000]\n\n");
+        return 1;
+    }else{
+        siteAtualizaRelevancia(temp,relev);
+        return 0;
+    }
+}
+
+int UsrInptLink(SITE* temp){
+    printf("Insira o link do site:\n>");
+    char link[50];
+    scanf("%s",link);
+    siteAtualizaLink(temp,link);
+    return 0;
+}
+
+void ClienteInsereSite(LISTA* l){
+
+    SITE* find;
+
+    do {
+        int cod;
+        printf("\nInsira um codigo pro site :\n>");
+        scanf("%d",&cod);
+        find = ListaBuscaCodigo(l,cod);
+        if(find == NULL){
+
+            SITE* temp;
+            temp = siteInicializa();
+
+            siteAtualizaCod(temp,cod);
+
+            UsrInptNome(temp);
+
+            int test;
+            test = UsrInptRelev(temp);
+            while (test == 1) {
+                test = UsrInptRelev(temp);
+            }
+
+            UsrInptLink(temp);
+
+
+            printf("\nInsira um n de palavras-chave do site:(n=<10)\n");
+            int n;
+            scanf("%d",&n);
+
+
+            char* palavratemp;
+            int i;
+            for(i=0;i<n;i++){
+                palavratemp = (char*)malloc(sizeof(char)*50);
+                printf("\nInsira uma palavra chave(max 50 char)\n");
+                scanf("%s",palavratemp);
+                siteAtualizaPalavrasChave(temp,palavratemp);
+                free(palavratemp);
+            }
+
+            ListaInsereSite(l,temp);
+        }else{
+        printf("\nCodigo ja existente!!!\nTente outro\n\n");
+        }
+
+    } while(find != NULL);
+
+}
+/*cliente insere site*/
+
 int main(int argc, char const *argv[]) {
     /*recebe entrada*/
     LISTA* l;
@@ -153,6 +238,7 @@ int main(int argc, char const *argv[]) {
     /*recebe entrada*/
 
     menu(l);
+
     /*ListaPrinta(l);*/
 
     /*apaga a lista*/
