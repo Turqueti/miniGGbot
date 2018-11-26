@@ -13,9 +13,12 @@ int numLinhas();
 
 void ClienteInsereSite(LISTA* l);
 int UsrInptLink(SITE* temp);
-
+int UsrInptNome(SITE* temp);
+int UsrInptRelev(SITE* temp);
 
 void ClienteRemoveSite(LISTA* lista);
+void ClienteAtualizaRelevancia(LISTA* l);
+void ClienteInserePalavraChave(LISTA *l);
 /*funcoes do cliente*/
 
 int numLinhas(){
@@ -127,13 +130,11 @@ void menu(LISTA* lista){
 			break;
 
 			case 3:
-                printf("3\n");
-                /*ClienteInserePalavraChave(lista);*/
+                ClienteInserePalavraChave(lista);
 			break;
 
 			case 4:
-                printf("4\n");
-                /*ClienteAtualizaRelevancia(lista);*/
+                ClienteAtualizaRelevancia(lista);
 			break;
 
             case 6:
@@ -245,6 +246,57 @@ void ClienteRemoveSite(LISTA* lista) {
     }
 }
 
+void ClienteAtualizaRelevancia(LISTA* l){
+	int cod, relev;
+
+	printf("\nInforme o codigo do site: ");
+	scanf("%d", &cod);
+
+	SITE* find = ListaBuscaCodigo(l, cod);
+	if (find == NULL){
+		printf("\nNao foi possivel encontrar o site!!!\nVerifique se o codigo foi inserido corretamente\n");
+		return;
+	}
+
+	printf("\nInforme a nova relevancia do site com ");
+	sitePrintaNome(find);
+	printf("> ");
+	scanf("%d",&relev);
+
+	if(relev >= 0 && relev <= 1000){
+		siteAtualizaRelevancia(find,relev);
+		printf("\nRelevancia do site atualizada com SUCESSO\n");
+	}else{
+		printf("\nValor de relevancia invalido!!!\nValor deve estar entre [0 - 1000]\n");
+	}
+}
+
+void ClienteInserePalavraChave(LISTA *l){
+    int cod;
+
+    printf("\nInforme o codigo do site: ");
+    scanf("%d", &cod);
+
+    SITE* find = ListaBuscaCodigo(l, cod);
+    if (find == NULL){
+		printf("\nNao foi possivel encontrar o site!!!\nVerifique se o codigo foi inserido corretamente\n");
+		return;
+	}
+    printf("\nInsira um n de palavras-chave do site:(n=<10)\n");
+    int n;
+    scanf("%d",&n);
+
+    char palavratemp[50];
+    int i;
+    for(i=0;i<n;i++){
+        printf("\nInsira uma palavra chave(max 50 char)\n");
+        scanf("%s",palavratemp);
+        siteAtualizaPalavrasChave(find,palavratemp);
+        printf("\nPalavra(s) inserida(s) com sucesso!!\n");
+    }
+
+}
+
 
 int main(int argc, char const *argv[]) {
     /*recebe entrada*/
@@ -254,8 +306,6 @@ int main(int argc, char const *argv[]) {
     /*recebe entrada*/
 
     menu(l);
-
-    /*ListaPrinta(l);*/
 
     /*apaga a lista*/
     ListaApagar(l);
