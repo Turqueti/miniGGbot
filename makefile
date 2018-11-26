@@ -1,2 +1,2 @@
 all:
-	gcc $(wildcard *.c *.h) -o main -Wall -std=c89
+	gcc test.c lista.c site.c -o out -Wall -std=c89

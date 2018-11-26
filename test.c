@@ -41,7 +41,6 @@ SITE* recebeSite(FILE* arquivo) {
     char nome[50];
     int relevancia;
     char link[100];
-    char palavrasChave[10][50];
 
     fscanf(arquivo,"%d,%[^,],%d,%[^,],",&codigo,nome,&relevancia,link);
     siteAtualizaCod(site,codigo);
@@ -106,11 +105,58 @@ void recebeLista(LISTA* lista) {
     fclose(arquivo);
 }
 
+void menu(LISTA* lista){
+	int opt;
+	do{
+		printf("\n-[Escolha uma operacao]-\n");
+		printf("\n1.Inserir um site\n2.Remover um site\n3.Inserir palavra-chave\n4.Atualizar relevancia\n5.Sair\n6.Imprimir Lista\n");
+		scanf("%d",&opt);
+		switch(opt){
+			case 1:
+                /*ClienteInsereSite(lista);*/
+                printf("1\n");
+			break;
+
+			case 2:
+                printf("2\n");
+                /*ClienteRemoveSite(lista);*/
+			break;
+
+			case 3:
+                printf("3\n");
+                /*ClienteInserePalavraChave(lista);*/
+			break;
+
+			case 4:
+                printf("4\n");
+                /*ClienteAtualizaRelevancia(lista);*/
+			break;
+
+            case 6:
+                printf("6\n");
+                ListaPrinta(lista);
+            break;
+
+			default:
+                opt = 5;
+		}
+	}while(opt != 5);
+	return;
+}
+
+
 int main(int argc, char const *argv[]) {
+    /*recebe entrada*/
     LISTA* l;
     l = ListaCriar();
     recebeLista(l);
-    ListaPrinta(l);
+    /*recebe entrada*/
+
+    menu(l);
+    /*ListaPrinta(l);*/
+
+    /*apaga a lista*/
     ListaApagar(l);
+    /*apaga a lista*/
     return 0;
 }
