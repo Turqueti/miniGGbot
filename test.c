@@ -13,6 +13,9 @@ int numLinhas();
 
 void ClienteInsereSite(LISTA* l);
 int UsrInptLink(SITE* temp);
+
+
+void ClienteRemoveSite(LISTA* lista);
 /*funcoes do cliente*/
 
 int numLinhas(){
@@ -120,8 +123,7 @@ void menu(LISTA* lista){
 			break;
 
 			case 2:
-                printf("2\n");
-                /*ClienteRemoveSite(lista);*/
+                ClienteRemoveSite(lista);
 			break;
 
 			case 3:
@@ -229,6 +231,20 @@ void ClienteInsereSite(LISTA* l){
 
 }
 /*cliente insere site*/
+
+
+void ClienteRemoveSite(LISTA* lista) {
+    int cod;
+    printf("\nDigite o codigo do item a ser deletado: \n");
+    scanf("%d",&cod);
+    int check = ListaRemoveSite(lista,cod);
+    if(check == 1){
+        printf("\nSite removido com sucesso\n");
+    }else{
+        printf("\nNao ha site com este codigo para ser removido\n");
+    }
+}
+
 
 int main(int argc, char const *argv[]) {
     /*recebe entrada*/
